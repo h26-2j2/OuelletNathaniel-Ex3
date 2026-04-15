@@ -19164,6 +19164,23 @@ MonoBehaviour:
       m_Action: Action Tir
       m_Flags: 0
     m_Flags: 0
+  actionDash:
+    m_Name: Action Dash
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 8657d933-20d5-4a30-8f54-743f71ff2c10
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 1daf1803-15a8-413a-94a0-2f3ffff21849
+      m_Path: <Keyboard>/b
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Action Dash
+      m_Flags: 0
+    m_Flags: 0
   vitesseDeplacement: 5
   forceSaut: 15
   estAuSol: 0
@@ -19175,6 +19192,8 @@ MonoBehaviour:
   prefabPosition: {fileID: 1495170190}
   timerTir: 0
   timerTirMax: 0.5
+  forceDash: 8.5
+  durationDash: 0.925
   sonSaut: {fileID: 8300000, guid: 5e65700cb01e4734481efea13b8b0827, type: 3}
   sonTir: {fileID: 8300000, guid: 53cefd290c80f5c4181674f4ad48c132, type: 3}
   animator: {fileID: 2209711221998578653}

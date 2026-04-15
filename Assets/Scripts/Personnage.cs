@@ -33,7 +33,10 @@ public class Personnage : MonoBehaviour
     public float timerTirMax = 2;
 
     [Header("Dash")]
-    // AJOUTER LES VARIABLES NÉCESSAIRES POUR LE DASH 👇
+    bool inputDash;
+    public float forceDash = 8f;
+    public float durationDash;
+    float timerDash;
 
     [Header("Sons")]
     public AudioClip sonSaut;
@@ -53,8 +56,7 @@ public class Personnage : MonoBehaviour
         actionMarche.Enable();
         actionSaut.Enable();
         actionTir.Enable();
-
-        //ACTIVER L'ACTION DU DASH 👇
+        actionDash.Enable();
     }
 
 
@@ -64,8 +66,7 @@ public class Personnage : MonoBehaviour
         actionMarche.Disable();
         actionSaut.Disable();
         actionTir.Disable();
-
-        //DÉSACTIVER L'ACTION DU DASH 👇
+        actionDash.Disable();
     }
 
 
@@ -81,7 +82,7 @@ public class Personnage : MonoBehaviour
         inputDeplacement = actionMarche.ReadValue<float>();
         inputSaut = actionSaut.WasPressedThisFrame();
         inputTir = actionTir.WasPressedThisFrame();
-        //DÉTECTER LA TOUCHE POUR LE DASH ICI 👇
+        inputDash = actionDash.WasPressedThisFrame();
 
         //Vérification du sol
         estAuSol = Physics2D.Raycast(transform.position, Vector2.down, 0.4f, coucheSol);
@@ -91,12 +92,10 @@ public class Personnage : MonoBehaviour
         animator.SetFloat("vitesse", Mathf.Abs(rb.linearVelocityX));
         animator.SetBool("estEnSaut", estAuSol == false);
 
-        // GÉRER L'ANIMATION ASSOCIÉE AU DASH ICI 👇 
-
 
         //Ajustement du sens du personnage en fonction des touches
         //Ajustement du sens du point d'instanciation du projectile
-        if (inputDeplacement < 0)
+        if (inputDeplacement < 0 && timerDash <= 0)
         {
             direction = -1;
             sr.flipX = true;
@@ -106,7 +105,7 @@ public class Personnage : MonoBehaviour
             prefabPosition.localPosition = positionProjectile;
 
         }
-        else if (inputDeplacement > 0)
+        else if (inputDeplacement > 0 && timerDash <= 0)
         {
             direction = 1;
             sr.flipX = false;
@@ -133,10 +132,22 @@ public class Personnage : MonoBehaviour
             animator.SetTrigger("tir");
         }
 
+        // Avoir l'animation "dash" active lorsqu'un dash survient
+        if (timerDash > 0)
+        {
+            animator.SetTrigger("dash");
+        }
+
         if (timerTir > 0)
         {
             timerTir -= Time.deltaTime;
             timerTir = Mathf.Max(timerTir, 0); // Empêche d'être plus petit que 0
+        }
+
+        if (timerDash > 0)
+        {
+            timerDash -= Time.deltaTime;
+            timerDash = Mathf.Max(timerDash, 0);
         }
 
 
@@ -147,7 +158,7 @@ public class Personnage : MonoBehaviour
     private void FixedUpdate()
     {
         //Changement de la vitesse de déplacement
-        if (inputDeplacement != 0)
+        if (inputDeplacement != 0 && timerDash <= 0)
         {
             rb.linearVelocityX = inputDeplacement * vitesseDeplacement;
         }
@@ -159,7 +170,12 @@ public class Personnage : MonoBehaviour
             audioSource.PlayOneShot(sonSaut);
         }
 
-        // GÉRER LA PHYSIQUE ASSOCIÉE AU DASH ICI 👇 
+        // Gestion dash
+        if (inputDash)
+        {
+            timerDash = durationDash;
+            rb.AddForceX(forceDash * direction, ForceMode2D.Impulse);
+        }
     }
 
 
